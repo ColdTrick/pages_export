@@ -18,8 +18,6 @@
 	
 	if($page)
 	{
-		$pdf = new HTML2FPDF('P', 'mm', $format);
-		
 		$pages[] = $page->getGUID();
 		
 		if($includesubpages)
@@ -32,17 +30,15 @@
 				
 				if($includeindex)
 				{
-					$index = '<h3>'.elgg_echo('page_export:export:index').'</h3>';
-					$index .= '<ul>
+					$html .= '<h3>'.elgg_echo('page_export:export:index').'</h3>';
+					$html .= '<ul>
 								<li><a href="#page_'.$page->getGUID().'">'.$page->title.'</a>';
 						
-						$index .= generateIndex($page);
+						$html .= generateIndex($page);
 						
-					$index .= '</li>
+					$html .= '</li>
 							</ul>'; 
-					
-					$pdf->AddPage();
-					$pdf->WriteHTML($index);
+					$html .= '<p style="page-break-after:always;"></p>';
 				}
 			}
 		}
@@ -50,18 +46,22 @@
 		foreach($pages as $subpage)
 		{
 			$subpage = get_entity($subpage);
-			$html = '<a name="page_'.$subpage->getGUID().'"></a><h3>'.$subpage->title.'</h3>';
+			$html .= '<a name="page_'.$subpage->getGUID().'"><h3>'.$subpage->title.'</h3></a>';
 			$html .= $subpage->description;
-			
-			$pdf->AddPage();
-			$pdf->WriteHTML($html);
-		}
+			$html .= '<p style="page-break-after:always;"></p>';
+		}		
 		
-		$pdf->Output(sanitize_file_name($page->title).".pdf", 'D');
+		$dompdf = new DOMPDF();
+		$dompdf->set_paper($format);
+		$dompdf->load_html($html);	
+		$dompdf->render();
+		$dompdf->stream(sanitize_file_name($page->title).".pdf");
 		exit;
+		
 	}
 	else
 	{
 		register_error("no guid");
 		forward(REFERER);
 	}
+	exit;

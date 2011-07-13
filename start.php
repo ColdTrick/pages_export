@@ -2,8 +2,6 @@
 	global $CONFIG;
 	
 	define("PAGE_EXPORT_BASEURL", 	$CONFIG->wwwroot."pg/pages_export");
-	
-	define('FPDF_FONTPATH',			dirname(__FILE__)."/lib/fpdf/font/");
 
 	function pages_export_init()
 	{
@@ -12,9 +10,8 @@
 		if(is_plugin_enabled('pages'))
 		{
 
+			require_once(dirname(__FILE__)."/lib/dompdf/dompdf_config.inc.php");
 			include_once(dirname(__FILE__)."/lib/functions.php");
-			include_once(dirname(__FILE__)."/lib/fpdf/fpdf.php");
-			include_once(dirname(__FILE__)."/lib/fpdf/html2fpdf.php");
 			include_once(dirname(__FILE__)."/lib/hooks.php");
 			
 			elgg_extend_view("css", 				"pages_export/css");
