@@ -1,7 +1,5 @@
 <?php 
 
-define('DEBUGPNG', true);
-
 	$guid = get_input('guid');
 	$includesubpages = get_input('includesubpages');
 	$includeindex = get_input('includeindex');
