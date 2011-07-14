@@ -130,6 +130,22 @@ class Image_Cache {
           $image = file_get_contents($full_url);
           restore_error_handler();
         }
+        
+        if(!$image)
+        {
+        	$ch = curl_init();
+			$timeout = 5;
+			 
+			curl_setopt ($ch, CURLOPT_URL, $full_url);
+			curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+			
+			curl_setopt($ch, CURLOPT_COOKIE, 'Elgg='.$_COOKIE['Elgg']); 
+			
+			$image = curl_exec($ch);
+			
+			curl_close($ch);
+        }
 
         if ( strlen($image) == 0 ) {
           //target image not found

@@ -1,5 +1,6 @@
 <?php 
 
+define('DEBUGPNG', true);
 
 	$guid = get_input('guid');
 	$includesubpages = get_input('includesubpages');
@@ -51,11 +52,13 @@
 			$html .= '<p style="page-break-after:always;"></p>';
 		}		
 		
+		
 		$dompdf = new DOMPDF();
 		$dompdf->set_paper($format);
 		$dompdf->load_html($html);	
 		$dompdf->render();
 		$dompdf->stream(sanitize_file_name($page->title).".pdf");
+		
 		exit;
 		
 	}

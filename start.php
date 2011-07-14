@@ -10,7 +10,7 @@
 		if(is_plugin_enabled('pages'))
 		{
 
-			require_once(dirname(__FILE__)."/lib/dompdf/dompdf_config.inc.php");
+			require_once(dirname(__FILE__)."/vendors/dompdf/dompdf_config.inc.php");
 			include_once(dirname(__FILE__)."/lib/functions.php");
 			include_once(dirname(__FILE__)."/lib/hooks.php");
 			
