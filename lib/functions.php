@@ -28,9 +28,29 @@
 			
 		if($children = elgg_get_entities_from_metadata($options))
 		{
+			if(is_plugin_enabled('pages_tree'))
+			{
+				$ordered_children = array();
+				
+				foreach($children as $key => $child){
+					if(isset($child->order)){
+						$order = (int) $child->order;
+						$ordered_children[$order] = $child;
+						unset($children[$key]);
+					}
+				} 
+				ksort($ordered_children);
+				
+				$ordered_children = array_merge($ordered_children, $children);
+			}
+			else
+			{
+				$ordered_children = $children;
+			}
+			
 			// build result
 			$result .= "<ul>";
-			foreach($children as $child_page)
+			foreach($ordered_children as $child_page)
 			{
 				$result .= '<li><a href="#page_'.$child_page->getGUID().'">'. $child_page->title.'</a>';
 				$result .= generateIndex($child_page);
@@ -53,7 +73,30 @@
 			
 		if($children = elgg_get_entities_from_metadata($options))
 		{
-			foreach($children as $child_page)
+		
+			if(is_plugin_enabled('pages_tree'))
+			{
+				$ordered_children = array();
+				
+				foreach($children as $key => $child){
+					if(isset($child->order)){
+						$order = (int) $child->order;
+						$ordered_children[$order] = $child;
+						unset($children[$key]);
+					}
+				} 
+				ksort($ordered_children);
+				
+				$ordered_children = array_merge($ordered_children, $children);
+			}
+			else
+			{
+				$ordered_children = $children;
+			}
+			
+			// build result
+			
+			foreach($ordered_children as $child_page)
 			{
 				$result[] = $child_page->getGUID();
 				
