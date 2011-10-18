@@ -26,26 +26,51 @@
 				"metadata_name_value_pairs" => array("parent_guid" => $page->getGUID()),
 			);
 			
-		if($children = elgg_get_entities_from_metadata($options))
-		{
+		
 			if(is_plugin_enabled('pages_tree'))
 			{
-				$ordered_children = array();
-				
-				foreach($children as $key => $child){
-					if(isset($child->order)){
-						$order = (int) $child->order;
-						$ordered_children[$order] = $child;
-						unset($children[$key]);
+				if($children = elgg_get_entities_from_metadata($options))
+				{
+					$ordered_children = array();
+					
+					foreach($children as $key => $child)
+					{
+						if(isset($child->order))
+						{
+							$order = (int) $child->order;
+							$ordered_children[$order] = $child;
+							unset($children[$key]);
+						}
+						else
+						{
+							$no_order = true;
+							break;
+						}
 					}
-				} 
-				ksort($ordered_children);
-				
-				$ordered_children = array_merge($ordered_children, $children);
+					
+					if(!$no_order)
+					{
+						ksort($ordered_children);
+						
+						$ordered_children = array_merge($ordered_children, $children);
+					}
+					else
+					{
+						$options['order_by'] = 'e.time_created ASC';
+						if($children = elgg_get_entities_from_metadata($options))
+						{
+							$ordered_children = $children;
+						}
+					}
+				}
 			}
 			else
 			{
-				$ordered_children = $children;
+				$options['order_by'] = 'e.time_created ASC';
+				if($children = elgg_get_entities_from_metadata($options))
+				{
+					$ordered_children = $children;
+				}
 			}
 			
 			// build result
@@ -57,7 +82,6 @@
 				$result .= "</li>";	
 			}	
 			$result .= "</ul>";
-		}
 		
 		return $result;
 	}
@@ -70,28 +94,52 @@
 				"subtype" => "page",
 				"metadata_name_value_pairs" => array("parent_guid" => $page->getGUID()),
 			);
-			
-		if($children = elgg_get_entities_from_metadata($options))
-		{
+		
 		
 			if(is_plugin_enabled('pages_tree'))
 			{
-				$ordered_children = array();
-				
-				foreach($children as $key => $child){
-					if(isset($child->order)){
-						$order = (int) $child->order;
-						$ordered_children[$order] = $child;
-						unset($children[$key]);
+				if($children = elgg_get_entities_from_metadata($options))
+				{
+					$ordered_children = array();
+					
+					foreach($children as $key => $child)
+					{
+						if(isset($child->order))
+						{
+							$order = (int) $child->order;
+							$ordered_children[$order] = $child;
+							unset($children[$key]);
+						}
+						else
+						{
+							$no_order = true;
+							break;
+						}
+					} 
+					
+					if(!$no_order)
+					{
+						ksort($ordered_children);
+						
+						$ordered_children = array_merge($ordered_children, $children);
 					}
-				} 
-				ksort($ordered_children);
-				
-				$ordered_children = array_merge($ordered_children, $children);
+					else
+					{
+						$options['order_by'] = 'e.time_created ASC';
+						if($children = elgg_get_entities_from_metadata($options))
+						{
+							$ordered_children = $children;
+						}
+					}
+				}
 			}
 			else
 			{
-				$ordered_children = $children;
+				$options['order_by'] = 'e.time_created ASC';
+				if($children = elgg_get_entities_from_metadata($options))
+				{
+					$ordered_children = $children;
+				}
 			}
 			
 			// build result
@@ -108,7 +156,6 @@
 					}
 				}
 			}	
-		}
 		
 		return $result;
 	}
