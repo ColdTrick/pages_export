@@ -16,46 +16,34 @@
 	}
 	
 	if($page)
-	{
-		$pages[] = $page->getGUID();
+	{		
+		if($includeindex)
+		{
+			$html .= '<h3>'.elgg_echo('page_export:export:index').'</h3>';
+			$html .= '<ul><li><a id="' . $page->getGUID() . '" title="' . $page->title . '"  href="#page_' . $page->getGUID().'">' . $page->title . '</a>';
+			
+			if($includesubpages)
+			{
+				$html .= pages_export_generate_index($page);
+			}
+			
+			$html .= '</li></ul><p style="page-break-after:always;"></p>';
+		}
+		
+		$html .= '<a name="page_'.$page->getGUID().'"><h3>'.$page->title.'</h3></a>';
+		$html .= $page->description;
+		$html .= '<p style="page-break-after:always;"></p>';
 		
 		if($includesubpages)
 		{
-			if(hasSubpages($page))
-			{
-				$subs = true;
-				
-				$pages = array_merge($pages, getPages($page));
-				
-				if($includeindex)
-				{
-					$html .= '<h3>'.elgg_echo('page_export:export:index').'</h3>';
-					$html .= '<ul>
-								<li><a href="#page_'.$page->getGUID().'">'.$page->title.'</a>';
-						
-						$html .= generateIndex($page);
-						
-					$html .= '</li>
-							</ul>'; 
-					$html .= '<p style="page-break-after:always;"></p>';
-				}
-			}
+			$html .= pages_export_get_pages_pdf($page);
 		}
-		
-		foreach($pages as $subpage)
-		{
-			$subpage = get_entity($subpage);
-			$html .= '<a name="page_'.$subpage->getGUID().'"><h3>'.$subpage->title.'</h3></a>';
-			$html .= $subpage->description;
-			$html .= '<p style="page-break-after:always;"></p>';
-		}		
-		
 		
 		$dompdf = new DOMPDF();
 		$dompdf->set_paper($format);
 		$dompdf->load_html($html);	
 		$dompdf->render();
-		$dompdf->stream(sanitize_file_name($page->title).".pdf");
+		$dompdf->stream(pages_export_sanitize_file_name($page->title).".pdf");
 		
 		exit;
 		
@@ -65,4 +53,3 @@
 		register_error("no guid");
 		forward(REFERER);
 	}
-	exit;

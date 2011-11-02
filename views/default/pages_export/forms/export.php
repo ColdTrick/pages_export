@@ -17,7 +17,7 @@ if($page)
 																					'A5' => 'A5',
 																					'letter' => elgg_echo('page_export:export:form:format:letter')))).'<br /><br />';
 
-	if(getSubpages($page))
+	if(pages_export_get_subpages($page))
 	{
 		$form_body .= 	elgg_view('input/checkboxes', array('internalname' => 'includesubpages', 'value' => 0, 'options' => array(elgg_echo('page_export:export:form:includesubpages')=>'1')));
 		$form_body .= 	elgg_view('input/checkboxes', array('internalname' => 'includeindex', 'value' => 0, 'options' => array(elgg_echo('page_export:export:form:includeindex')=>'1')));
