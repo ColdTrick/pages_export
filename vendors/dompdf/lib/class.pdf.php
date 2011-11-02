@@ -3058,25 +3058,14 @@ EOT;
     $debug = empty($options['compression']);
     $tmp =  ltrim($this->output($debug));
 
-    header("Cache-Control: private");
-    header("Content-type: application/pdf");
-
-    //FIXME: I don't know that this is sufficient for determining content length (i.e. what about transport compression?)
-    header("Content-Length: " . mb_strlen($tmp, '8bit'));
+	header("Pragma: public");
+    header("Content-type: application/octet-stream");
+    
     $fileName =  (isset($options['Content-Disposition']) ?  $options['Content-Disposition'] :  'file.pdf');
 
-    if  ( !isset($options["Attachment"]))
-      $options["Attachment"] =  true;
 
-    $attachment =  $options["Attachment"] ?  "attachment" :  "inline";
-
-    header("Content-Disposition: $attachment; filename=\"$fileName\"");
-
-    if  (isset($options['Accept-Ranges']) &&  $options['Accept-Ranges'] ==  1) {
-      //FIXME: Is this the correct value ... spec says 1#range-unit
-      header("Accept-Ranges: " . mb_strlen($tmp, '8bit'));
-    }
-
+    header("Content-Disposition: attachment; filename=$fileName");
+    
     echo  $tmp;
     flush();
   }

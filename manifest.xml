@@ -19,6 +19,11 @@ Features
 Version history
 ======================
 
+0.3 (2011-11-2)
+	- Fixed
+		- page ordering
+		- file download IE7
+		
 0.2 (2011-07-14)
 	- switched PDF library.
 		- Images now work properly
