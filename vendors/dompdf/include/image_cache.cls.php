@@ -131,64 +131,69 @@ class Image_Cache {
           restore_error_handler();
         }
         
-        if(!$image)
+        //if(!$image)
         {
-        	$ch = curl_init();
-			$timeout = 5;
+		$ch = curl_init();
+		$timeout = 5;
 			 
-			curl_setopt ($ch, CURLOPT_URL, $full_url);
-			curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+		curl_setopt ($ch, CURLOPT_URL, $full_url);
+		curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
 			
-			curl_setopt($ch, CURLOPT_COOKIE, 'Elgg='.$_COOKIE['Elgg']); 
+		curl_setopt($ch, CURLOPT_COOKIE, 'Elgg='.$_COOKIE['Elgg']); 
 			
-			$image = curl_exec($ch);
+		$image = curl_exec($ch);
 			
-			curl_close($ch);
+		curl_close($ch);
         }
-
-        if ( strlen($image) == 0 ) {
-          //target image not found
-          $resolved_url = DOMPDF_LIB_DIR . "/res/broken_image.png";
-          $ext = "png";
-
-          //debugpng
-          if ($DEBUGPNG) $full_url_dbg = $full_url.'(missing)';
-
-        } else {
-
-        file_put_contents($resolved_url, $image);
-
-		//e.g. fetch.php?media=url.jpg&cache=1
-		//- Image file name might be one of the dynamic parts of the url, don't strip off!
-		//  if ( preg_match("/.*\.(\w+)/",$url,$match) ) $ext = $match[1];
-		//- a remote url does not need to have a file extension at all
-        //- local cached file does not have a matching file extension
-        //Therefore get image type from the content
-
-        $imagedim = dompdf_getimagesize($resolved_url);
         
-        if( $imagedim[0] && $imagedim[1] && 
-            in_array($imagedim[2], array(IMAGETYPE_GIF, IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_BMP)) ) {
-        //target image is valid
+        if ( strlen($image) == 0 )
+        {
+			//target image not found
+			$resolved_url = DOMPDF_LIB_DIR . "/res/broken_image.png";
+			$ext = "png";
+			
+			//debugpng
+			if ($DEBUGPNG)
+			{
+				$full_url_dbg = $full_url.'(missing)';
+			}
 
-        $imagetypes = array('','gif','jpeg','png','swf','psd','bmp');
-        $ext = $imagetypes[$imagedim[2]];
-        if ( rename($resolved_url,$resolved_url.'.'.$ext) ) {
-          $resolved_url .= '.'.$ext;
         }
- 
- 		//Don't put replacement image into cache - otherwise it will be deleted on cache cleanup.
- 		//Only execute on successfull caching of remote image.
-        self::$_cache[$full_url] = array($resolved_url,$ext);
-
-        } else {
-          //target image is not valid.
-          unlink($resolved_url);
-          
-          $resolved_url = DOMPDF_LIB_DIR . "/res/broken_image.png";
-          $ext = "png";
-        }
+        else
+        {
+	        file_put_contents($resolved_url, $image);
+	
+			//e.g. fetch.php?media=url.jpg&cache=1
+			//- Image file name might be one of the dynamic parts of the url, don't strip off!
+			//  if ( preg_match("/.*\.(\w+)/",$url,$match) ) $ext = $match[1];
+			//- a remote url does not need to have a file extension at all
+	        //- local cached file does not have a matching file extension
+	        //Therefore get image type from the content
+	
+	        $imagedim = dompdf_getimagesize($resolved_url);
+	        
+	        if( $imagedim[0] && $imagedim[1] && 
+	            in_array($imagedim[2], array(IMAGETYPE_GIF, IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_BMP)) ) {
+	        //target image is valid
+	
+	        $imagetypes = array('','gif','jpeg','png','swf','psd','bmp');
+	        $ext = $imagetypes[$imagedim[2]];
+	        if ( rename($resolved_url,$resolved_url.'.'.$ext) ) {
+	          $resolved_url .= '.'.$ext;
+	        }
+	 
+	 		//Don't put replacement image into cache - otherwise it will be deleted on cache cleanup.
+	 		//Only execute on successfull caching of remote image.
+	        self::$_cache[$full_url] = array($resolved_url,$ext);
+	
+	        } else {
+	          //target image is not valid.
+	          unlink($resolved_url);
+	          
+	          $resolved_url = DOMPDF_LIB_DIR . "/res/broken_image.png";
+	          $ext = "png";
+	        }
         }
 
       }
